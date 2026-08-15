@@ -16,6 +16,12 @@ class ImportController extends ControllerBase {
     'date' => 'field_date',
     'url' => 'field_url',
     'medium' => 'field_medium',
+    'content' => [
+      'key' => 'body',
+      'template' => [
+        'format' => 'basic_html',
+      ],
+    ]
   ];
 
 
@@ -55,7 +61,9 @@ class ImportController extends ControllerBase {
         }
 
         if (array_key_exists($k, $data)) {
-          $update[$def['key']] = $data[$k];
+          $value = $def['template'] ?? [];
+          $value[$def['valueKey'] ?? 'value'] = $data[$k];
+          $update[$def['key']] = $value;
         }
       }
 
