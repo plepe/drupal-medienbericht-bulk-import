@@ -76,20 +76,15 @@ class ImportController extends ControllerBase {
             $type = $def['type'] ?? 'default';
 
             if ($type === 'image') {
-              $field_settings = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', $update['type'])[$def['key']]->getSettings();
-
-              $token_service = \Drupal::service('token');
-              $directory = $token_service->replace($field_settings['file_directory'] ?? '');
-
-              $destination = ($field_settings['uri_scheme'] ?? 'public') . '://' . $directory;
-
               $file_info = pathinfo($v['src']);
-
               copy($v['src'], '/tmp/medienbericht_bulk_import.dat');
-              $file_uri = \Drupal::service('file_system')->copy('/tmp/medienbericht_bulk_import.dat', $destination . '/' . $file_info['basename']);
+
+              // use temporary space and rely on filefield_paths for moving
+              $temp_uri = 'temporary://' . $file_info['basename'];
+              file_put_contents($temp_uri, file_get_contents($v['src']));
 
               $file = File::create([
-                'uri' => $file_uri,
+                'uri' => $temp_uri,
               ]);
               $file->setPermanent();
               $file->save();
