@@ -1,0 +1,4 @@
+general:
+  version: 1.x
+  js:
+    js/medienbericht_bulk_import.js: {}

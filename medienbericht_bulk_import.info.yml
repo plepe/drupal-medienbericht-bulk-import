@@ -1,0 +1,5 @@
+name: Medienberichte Bulk Import
+type: module
+description: In Radnetz-Dashboard import Medienberichte in bulk.
+package: Custom
+core_version_requirement: ^9 || ^10 || ^11

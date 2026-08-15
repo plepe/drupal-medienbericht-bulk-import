@@ -1,0 +1,15 @@
+medienbericht_bulk_import.show:
+  path: '/medienbericht_bulk_import'
+  defaults:
+    _title: 'Medienberichte Bulk Import'
+    _controller: '\Drupal\medienbericht_bulk_import\Controller\ImportController::show'
+  requirements:
+    _permission: 'create medienbericht content'
+
+medienbericht_bulk_import.import:
+  path: '/medienbericht_bulk_import/import'
+  defaults:
+    _title: 'Medienberichte Bulk Import'
+    _controller: '\Drupal\medienbericht_bulk_import\Controller\ImportController::import'
+  requirements:
+    _permission: 'create medienbericht content'
