@@ -5,11 +5,19 @@ namespace Drupal\medienbericht_bulk_import\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\node\Entity\Node;
 
 /**
  * Imports medienberichte in bulk.
  */
 class ImportController extends ControllerBase {
+  private $field_mapping = [
+    'title' => 'title',
+    'date' => 'field_date',
+    'url' => 'field_url',
+    'medium' => 'field_medium',
+  ];
+
 
   /**
    * Returns the page where the URLs can be pasted.
@@ -29,8 +37,36 @@ class ImportController extends ControllerBase {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function import (Request $request): JsonResponse {
+    $url = $request->request->get('url');
+
+    $data = file_get_contents("http://localhost:8080/?url=" . $url);
+    $data = json_decode($data, true);
+
+    $id = null;
+
+    if ($data['title'] && $data['date']) {
+      $update = [
+        'type' => 'article',
+      ];
+
+      foreach ($this->field_mapping as $k => $def) {
+        if (is_string($def)) {
+          $def = [ 'key' => $def ];
+        }
+
+        if (array_key_exists($k, $data)) {
+          $update[$def['key']] = $data[$k];
+        }
+      }
+
+      $node = Node::create($update);
+      $node->save();
+      $id = $node->id();
+    }
+
     return new JsonResponse([
-      'url' => $request->request->get('url'),
+      'id' => $id,
+      'data' => $data,
     ], 200);
   }
 }
