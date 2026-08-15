@@ -55,6 +55,9 @@ class ImportController extends ControllerBase {
     $data = json_decode($data, true);
 
     $id = null;
+    $result = [
+      'data' => $data,
+    ];
 
     if ($data['title'] && $data['date']) {
       $update = [
@@ -105,12 +108,30 @@ class ImportController extends ControllerBase {
 
       $node = Node::create($update);
       $node->save();
-      $id = $node->id();
+      $result['id'] = $node->id();
+    } else {
+      $params = [];
+
+      foreach ($data as $k => $value) {
+        if (!$field_mapping[$k]) { continue; }
+
+        $def = $field_mapping[$k];
+        if (is_string($def)) {
+          $def = ['key' => $def];
+        }
+
+        if (!is_array($value)) {
+          $value = [$value];
+        }
+
+        foreach ($value as $i => $v) {
+          $params[] = "edit[{$def['key']}][widget][{$i}][" + ($def['valueKey'] ?? 'value') + ']=' + urlencode($v);
+        }
+      }
+
+      $result['prepoluateParams'] = implode('&', $params);
     }
 
-    return new JsonResponse([
-      'id' => $id,
-      'data' => $data,
-    ], 200);
+    return new JsonResponse($result, 200);
   }
 }
