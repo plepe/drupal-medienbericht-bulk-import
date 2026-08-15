@@ -61,9 +61,16 @@ class ImportController extends ControllerBase {
         }
 
         if (array_key_exists($k, $data)) {
-          $value = $def['template'] ?? [];
-          $value[$def['valueKey'] ?? 'value'] = $data[$k];
-          $update[$def['key']] = $value;
+          if (!($def['multiple'] ?? false)) {
+            $data[$k] = [$data[$k]];
+          }
+
+          $update[$def['key']] = [];
+          foreach ($data[$k] as $v) {
+            $value = $def['template'] ?? [];
+            $value[$def['valueKey'] ?? 'value'] = $v;
+            $update[$def['key']][] = $value;
+          }
         }
       }
 
