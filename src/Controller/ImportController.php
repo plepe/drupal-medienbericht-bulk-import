@@ -6,6 +6,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\node\Entity\Node;
+use Drupal\file\Entity\File;
 
 /**
  * Imports medienberichte in bulk.
@@ -21,7 +22,12 @@ class ImportController extends ControllerBase {
       'template' => [
         'format' => 'basic_html',
       ],
-    ]
+    ],
+    'images' => [
+      'key' => 'field_images',
+      'type' => 'image',
+      'multiple' => true,
+    ],
   ];
 
 
@@ -67,8 +73,36 @@ class ImportController extends ControllerBase {
 
           $update[$def['key']] = [];
           foreach ($data[$k] as $v) {
-            $value = $def['template'] ?? [];
-            $value[$def['valueKey'] ?? 'value'] = $v;
+            $type = $def['type'] ?? 'default';
+
+            if ($type === 'image') {
+              $field_settings = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', $update['type'])[$def['key']]->getSettings();
+
+              $token_service = \Drupal::service('token');
+              $directory = $token_service->replace($field_settings['file_directory'] ?? '');
+
+              $destination = ($field_settings['uri_scheme'] ?? 'public') . '://' . $directory;
+
+              $file_info = pathinfo($v['src']);
+
+              copy($v['src'], '/tmp/medienbericht_bulk_import.dat');
+              $file_uri = \Drupal::service('file_system')->copy('/tmp/medienbericht_bulk_import.dat', $destination . '/' . $file_info['basename']);
+
+              $file = File::create([
+                'uri' => $file_uri,
+              ]);
+              $file->setPermanent();
+              $file->save();
+
+              $value = [
+                'target_id' => $file->id(),
+                'alt' => $v['alt'],
+              ];
+            } else {
+              $value = $def['template'] ?? [];
+              $value[$def['valueKey'] ?? 'value'] = $v;
+            }
+
             $update[$def['key']][] = $value;
           }
         }
