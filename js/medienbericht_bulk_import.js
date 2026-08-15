@@ -34,12 +34,23 @@ function importUrl (url) {
   const li = document.createElement('li')
   list.appendChild(li)
 
+  const closeBtn = document.createElement('a')
+  closeBtn.href = '#'
+  closeBtn.className = 'close'
+  closeBtn.innerHTML = '🗙'
+  closeBtn.onclick = () => {
+    list.removeChild(li)
+    return false
+  }
+  li.appendChild(closeBtn)
+
   const divUrl = document.createElement('div')
   divUrl.className = 'url'
   li.appendChild(divUrl)
 
   const a = document.createElement('a')
   a.href = url
+  a.target = '_blank'
   a.appendChild(document.createTextNode(url))
   divUrl.appendChild(a)
 

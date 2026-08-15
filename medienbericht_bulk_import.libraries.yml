@@ -2,3 +2,6 @@ general:
   version: 1.x
   js:
     js/medienbericht_bulk_import.js: {}
+  css:
+    layout:
+      css/medienbericht_bulk_import.css: {}
