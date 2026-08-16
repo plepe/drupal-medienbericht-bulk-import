@@ -68,7 +68,11 @@ function importUrl (url) {
     .then(body => {
       console.log(body)
 
-      if (body.id) {
+      if (body.found) {
+        const url = Drupal.url('node/' + body.found[0])
+        divStatus.innerHTML = '<a target="_blank" href="' + url + '">Medienbericht bereits eingetragen</a>'
+      }
+      else if (body.id) {
         const url = Drupal.url('node/' + body.id + '/edit')
 
         divStatus.innerHTML = '<a target="_blank" href="' + url + '">Medienbericht angelegt</a>, bitte ergänze Projekte/Tags/...'

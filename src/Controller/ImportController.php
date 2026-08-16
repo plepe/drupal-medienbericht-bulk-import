@@ -51,8 +51,30 @@ class ImportController extends ControllerBase {
   public function import (Request $request): JsonResponse {
     $url = $request->request->get('url');
 
+    $found = $this->getMedienberichteWithURL($url);
+
+    if (sizeof($found)) {
+      $result = [
+        'found' => $found,
+      ];
+
+      return new JsonResponse($result, 200);
+    }
+
     $data = file_get_contents("http://localhost:8080/?url=" . $url);
     $data = json_decode($data, true);
+
+    if ($data['url'] !== $url) {
+      $found = $this->getMedienberichteWithURL($data['url']);
+
+      if (sizeof($found)) {
+        $result = [
+          'found' => $found,
+        ];
+
+        return new JsonResponse($result, 200);
+      }
+    }
 
     $id = null;
     $result = [
@@ -133,5 +155,15 @@ class ImportController extends ControllerBase {
     }
 
     return new JsonResponse($result, 200);
+  }
+
+  function getMedienberichteWithURL ($url) {
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'article')
+      ->condition('field_url.uri', $url, '=')
+      ->accessCheck(true);
+    $nids = $query->execute();
+
+    return array_values($nids);
   }
 }
