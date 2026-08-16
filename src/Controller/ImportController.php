@@ -15,7 +15,10 @@ class ImportController extends ControllerBase {
   private $field_mapping = [
     'title' => 'title',
     'date' => 'field_date',
-    'url' => 'field_url',
+    'url' => [
+      'key' => 'field_url',
+      'valueKey' => 'uri',
+    ],
     'medium' => 'field_medium',
     'content' => [
       'key' => 'body',
