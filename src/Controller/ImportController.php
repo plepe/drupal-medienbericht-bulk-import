@@ -109,7 +109,9 @@ class ImportController extends ControllerBase {
 
               // use temporary space and rely on filefield_paths for moving
               $temp_uri = 'temporary://' . $file_info['basename'];
-              file_put_contents($temp_uri, file_get_contents($v['src']));
+              $contents = file_get_contents($v['src']);
+
+              $file_uri = \Drupal::service('file_system')->saveData($contents, $temp_uri);
 
               $file = File::create([
                 'uri' => $temp_uri,
