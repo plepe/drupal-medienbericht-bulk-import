@@ -14,7 +14,10 @@ use Drupal\file\Entity\File;
 class ImportController extends ControllerBase {
   private $field_mapping = [
     'title' => 'title',
-    'date' => 'field_date',
+    'date' => [
+      'key' => 'field_date',
+      'modify' => 'parseDate',
+    ],
     'url' => [
       'key' => 'field_url',
       'valueKey' => 'uri',
@@ -102,6 +105,14 @@ class ImportController extends ControllerBase {
           $update[$def['key']] = [];
           foreach ($data[$k] as $v) {
             $type = $def['type'] ?? 'default';
+
+            if ($def['modify']) {
+              switch ($def['modify']) {
+                case 'parseDate':
+                  $v = substr($v, 0, 10);
+                  break;
+              }
+            }
 
             if ($type === 'image') {
               $file_info = pathinfo($v['src']);
