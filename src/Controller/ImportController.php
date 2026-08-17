@@ -44,7 +44,7 @@ class ImportController extends ControllerBase {
    */
   public function show () {
     $build = [
-      '#markup' => 'Paste a list of URLs into this fields and press "Import":<div id="import"></div>',
+      '#markup' => '<div id="medienbericht_bulk_import">Paste a list of URLs into this fields and press "Import":<div id="import"></div></div>',
       '#attached' => ['library' => ['medienbericht_bulk_import/general']],
     ];
     return $build;
