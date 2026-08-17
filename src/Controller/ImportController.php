@@ -105,10 +105,9 @@ class ImportController extends ControllerBase {
 
             if ($type === 'image') {
               $file_info = pathinfo($v['src']);
-              copy($v['src'], '/tmp/medienbericht_bulk_import.dat');
 
               // use temporary space and rely on filefield_paths for moving
-              $temp_uri = 'temporary://' . $file_info['basename'];
+              $temp_uri = 'public://filefield_paths/' . $file_info['basename'];
               $contents = file_get_contents($v['src']);
 
               $file_uri = \Drupal::service('file_system')->saveData($contents, $temp_uri);
