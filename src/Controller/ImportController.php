@@ -69,7 +69,22 @@ class ImportController extends ControllerBase {
       return new JsonResponse($result, 200);
     }
 
-    $data = file_get_contents($this->server . "/?url=" . $url);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $this->server . "/?url=" . $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $data = curl_exec($ch);
+    $headers = curl_getinfo($ch);
+
+    if ($headers['http_code'] !== 200) {
+      if ($headers['http_code'] === 0) {
+        $error = "Medienbericht Server nicht erreichbar!";
+      } else {
+        $error = "Medienbericht Server antwortet mit Fehlercode {$headers['http_code']}";
+      }
+
+      return new JsonResponse(['error' => $error], 200);
+    }
+
     $data = json_decode($data, true);
 
     if ($data['url'] !== $url) {
