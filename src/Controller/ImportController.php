@@ -12,6 +12,8 @@ use Drupal\file\Entity\File;
  * Imports medienberichte in bulk.
  */
 class ImportController extends ControllerBase {
+  private $server = 'http://localhost:8080';
+
   private $field_mapping = [
     'title' => 'title',
     'date' => [
@@ -67,7 +69,7 @@ class ImportController extends ControllerBase {
       return new JsonResponse($result, 200);
     }
 
-    $data = file_get_contents("http://localhost:8080/?url=" . $url);
+    $data = file_get_contents($this->server . "/?url=" . $url);
     $data = json_decode($data, true);
 
     if ($data['url'] !== $url) {
