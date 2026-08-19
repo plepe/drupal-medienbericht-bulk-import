@@ -117,6 +117,9 @@ class ImportController extends ControllerBase {
             }
 
             if ($type === 'image') {
+              if (array_key_exists('tmpPath', $v)) {
+                $v['src'] = $this->server . '/tmp/' . $v['tmpPath'];
+              }
               $file_info = pathinfo($v['src']);
 
               // use temporary space and rely on filefield_paths for moving
