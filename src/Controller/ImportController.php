@@ -130,7 +130,7 @@ class ImportController extends ControllerBase {
           foreach ($data[$k] as $v) {
             $type = $def['type'] ?? 'default';
 
-            if ($def['modify']) {
+            if ($def['modify'] ?? '') {
               switch ($def['modify']) {
                 case 'parseDate':
                   $v = substr($v, 0, 10);
