@@ -73,20 +73,20 @@ function importUrl (url) {
       }
       else if (body.found) {
         const url = Drupal.url('node/' + body.found[0])
-        divStatus.innerHTML = '<a target="_blank" href="' + url + '">Medienbericht bereits eingetragen</a>'
+        divStatus.innerHTML = '<a target="_blank" href="' + url + '">Medienbericht bereits eingetragen</a>. ' + (body.message ?? '')
       }
       else if (body.id) {
         const url = Drupal.url('node/' + body.id + '/edit')
 
-        divStatus.innerHTML = '<a target="_blank" href="' + url + '">Medienbericht angelegt</a>, bitte ergänze Projekte/Tags/...'
+        divStatus.innerHTML = '<a target="_blank" href="' + url + '">Medienbericht angelegt</a>, bitte ergänze Projekte/Tags/... ' + (body.message ?? '')
       } else if (body.prepoluateParams) {
         const url = Drupal.url('node/add/medienbericht?' + (body.prepoluateParams ?? ''))
 
-        divStatus.innerHTML = 'Kann Medienbericht nicht anlegen, <a target="_blank" href="' + url + '">nutze diesen Link</a>'
+        divStatus.innerHTML = 'Kann Medienbericht nicht anlegen, <a target="_blank" href="' + url + '">nutze diesen Link</a>. ' + (body.message ?? '')
       } else {
         const prepoluateParams = 'edit[field_url][widget][0][uri]=' + encodeURIComponent(url)
         let _url = Drupal.url('node/add/medienbericht?' + prepoluateParams)
-        divStatus.innerHTML = 'Kann Medienbericht nicht anlegen, <a target="_blank" href="' + _url + '">nutze diesen Link</a>'
+        divStatus.innerHTML = 'Kann Medienbericht nicht anlegen, <a target="_blank" href="' + _url + '">nutze diesen Link</a>. ' + (body.message ?? '')
       }
     })
 }
