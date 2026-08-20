@@ -69,7 +69,8 @@ function importUrl (url) {
       console.log(body)
 
       if (body.error) {
-        divStatus.innerHTML = 'Fehler: ' + body.error
+        const href = Drupal.url('node/add/medienbericht?edit[field_url][widget][0][uri]=' + encodeURIComponent(url))
+        divStatus.innerHTML = 'Fehler: ' + body.error + '. <a target="_blank" href="' + href + '">Medienbericht manuell anlegen</a>.'
       }
       else if (body.found) {
         const url = Drupal.url('node/' + body.found[0])
