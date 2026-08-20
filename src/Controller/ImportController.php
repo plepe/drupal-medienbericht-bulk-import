@@ -36,6 +36,13 @@ class ImportController extends ControllerBase {
       'type' => 'image',
       'multiple' => true,
     ],
+    'type' => [
+      'key' => 'field_tags',
+      'type' => 'reference',
+      'reference_entity_type' => 'taxonomy_term',
+      'reference_type' => 'tags',
+      'reference_field' => 'field_id'
+    ],
   ];
 
 
@@ -153,6 +160,16 @@ class ImportController extends ControllerBase {
                 'target_id' => $file->id(),
                 'alt' => $v['alt'],
               ];
+            } elseif ($type === 'reference') {
+              $query = \Drupal::entityQuery($def['reference_entity_type'])
+                ->condition($def['reference_entity_type'] === 'taxonomy_term' ? 'vid' : 'type', $def['reference_type'])
+                ->condition($def['reference_field'], $v)
+                ->accessCheck(false);
+              $ids = $query->execute();
+
+              if (sizeof($ids)) {
+                $value[$def['valueKey'] ?? 'target_id'] = array_values($ids)[0];
+              }
             } else {
               $value = $def['template'] ?? [];
               $value[$def['valueKey'] ?? 'value'] = $v;
