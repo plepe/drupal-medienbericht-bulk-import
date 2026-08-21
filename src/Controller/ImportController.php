@@ -187,9 +187,9 @@ class ImportController extends ControllerBase {
       $params = [];
 
       foreach ($data as $k => $value) {
-        if (!$field_mapping[$k]) { continue; }
+        if (!$this->field_mapping[$k]) { continue; }
 
-        $def = $field_mapping[$k];
+        $def = $this->field_mapping[$k];
         if (is_string($def)) {
           $def = ['key' => $def];
         }
@@ -199,7 +199,7 @@ class ImportController extends ControllerBase {
         }
 
         foreach ($value as $i => $v) {
-          $params[] = "edit[{$def['key']}][widget][{$i}][" + ($def['valueKey'] ?? 'value') + ']=' + urlencode($v);
+          $params[] = "edit[{$def['key']}][widget][{$i}][" . ($def['valueKey'] ?? 'value') . ']=' . urlencode($v);
         }
       }
 
